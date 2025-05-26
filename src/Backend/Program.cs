@@ -1,6 +1,5 @@
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
-using MongoDB.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
