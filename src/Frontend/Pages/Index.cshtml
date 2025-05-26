@@ -1,10 +1,71 @@
 ﻿@page
-@model IndexModel
+@model Frontend.Pages.IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Products";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">Product Catalog</h1>
+
+    <!-- Search Bar -->
+    <form method="get" class="mb-6 flex justify-center">
+        <input
+            type="text"
+            name="Pagination.Query"
+            value="@Model.Pagination.Query"
+            placeholder="Search products..."
+            class="border rounded-l px-4 py-2 w-72 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+            type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-700 transition"
+        >
+            Search
+        </button>
+    </form>
+
+    <!-- Products List -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        @if (Model.Products != null && Model.Products.Data.Any())
+        {
+            foreach (var product in Model.Products.Data)
+            {
+                <div class="border rounded shadow p-4 flex flex-col">
+                    <h2 class="font-semibold text-lg mb-2">@product.Name</h2>
+                    <p class="text-sm text-gray-600 mb-4">@product.Description</p>
+                    <div class="mt-auto">
+                        <span class="text-xl font-bold text-green-700">
+                            $@product.Price
+                        </span>
+                        @if (product.DiscountPercentage.HasValue && product.DiscountPercentage > 0)
+                        {
+                            <span class="ml-2 text-sm line-through text-red-500">
+                                $@(product.Price / (1 - product.DiscountPercentage.Value / 100))
+                            </span>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="col-span-3 text-center text-gray-500">No products found.</p>
+        }
+    </div>
+
+
+    <div class="mt-8 flex justify-center space-x-4">
+        @if (Model.Products != null)
+        {
+            <a asp-page="./Index" asp-route-Pagination.Page="@(Model.Products.CurrentPage - 1)"
+               asp-route-Pagination.Query="@Model.Pagination.Query"
+               class="px-3 py-1 border rounded hover:bg-gray-200 @(Model.Products.CurrentPage == 1 ? "pointer-events-none opacity-50" : "")">Previous</a>
+
+            <span class="px-3 py-1 border rounded bg-blue-600 text-white">@Model.Products.CurrentPage</span>
+
+            <a asp-page="./Index" asp-route-Pagination.Page="@(Model.Products.CurrentPage + 1)"
+               asp-route-Pagination.Query="@Model.Pagination.Query"
+               class="px-3 py-1 border rounded hover:bg-gray-200 @(Model.Products.CurrentPage == Model.Products.TotalPages ? "pointer-events-none opacity-50" : "")">Next</a>
+        }
+    </div>
 </div>
