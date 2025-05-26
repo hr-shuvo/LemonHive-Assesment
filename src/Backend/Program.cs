@@ -1,5 +1,6 @@
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,11 @@ if (app.Environment.IsDevelopment())
 
 app.MapControllers();
 
-
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await SeedData.SeedProductsAsync(dbContext);
+    await SeedData.SeedCartsAsync(app);
+}
 
 app.Run();
