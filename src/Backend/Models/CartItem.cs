@@ -4,12 +4,16 @@ namespace Backend.Models;
 
 public class Cart : Entity
 {
-    // public string UserId { get; set; }
+    public string UserId { get; set; } = "1000";
     public List<CartItem> Items { get; set; } = [];
+
+    public Cart() : base()
+    {
+    }
 }
 
 public class CartItem
 {
-    public int ProductId { get; set; }
+    public long ProductId { get; set; }
     public int Quantity { get; set; }
 }

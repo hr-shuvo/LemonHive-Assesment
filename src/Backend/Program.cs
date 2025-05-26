@@ -1,4 +1,5 @@
 using Backend.Data;
+using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(opt =>
 {
     opt.UseNpgsql(connectionString);
 });
+
+builder.Services.AddScoped<ICartService, CartService>();
+
 
 var app = builder.Build();
 
