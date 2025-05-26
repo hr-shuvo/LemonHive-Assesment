@@ -15,7 +15,7 @@ public class ProductService
     
     public async Task<PaginatedResult<Product>?> GetProductsAsync(string? query, int page = 1, int pageSize = 10)
     {
-        var url = $"products?query={Uri.EscapeDataString(query ?? string.Empty)}&page={page}&pageSize={pageSize}";
+        var url = $"products/search?query={Uri.EscapeDataString(query ?? string.Empty)}&page={page}&pageSize={pageSize}";
         var response = await _httpClient.GetAsync(url);
         
         if (!response.IsSuccessStatusCode)

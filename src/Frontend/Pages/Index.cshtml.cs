@@ -36,6 +36,9 @@ public class IndexModel : PageModel
         if (PageNumber < 1) PageNumber = 1;
         if (PageSize <= 0) PageSize = 2;
         
+        _logger.LogInformation("Fetching products for query: {Query}, page: {PageNumber}, page size: {PageSize}", 
+            Query, PageNumber, PageSize);
+        
         Products = await _productService.GetProductsAsync(Query, PageNumber, PageSize);
         
         if (Products == null)
