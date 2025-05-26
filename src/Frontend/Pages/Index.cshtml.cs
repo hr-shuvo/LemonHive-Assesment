@@ -1,6 +1,7 @@
 using Frontend.Common;
 using Frontend.Models;
 using Frontend.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Frontend.Pages;
@@ -9,8 +10,17 @@ public class IndexModel : PageModel
 {
     private readonly ProductService _productService;
     
-    public PaginatedRequest Pagination { get; set; } = new();
+    // public PaginatedRequest Pagination { get; set; } = new();
     
+    [BindProperty(SupportsGet = true)]
+    public int PageNumber { get; set; } = 1;
+
+    [BindProperty(SupportsGet = true)]
+    public int PageSize { get; set; } = 2;
+
+    [BindProperty(SupportsGet = true)]
+    public string? Query { get; set; }
+
     private readonly ILogger<IndexModel> _logger;
 
     public IndexModel(ILogger<IndexModel> logger, ProductService productService)
@@ -23,16 +33,19 @@ public class IndexModel : PageModel
 
     public async Task OnGetAsync()
     {
-        Products = await _productService.GetProductsAsync(Pagination.Query, Pagination.Page, Pagination.PageSize);
+        if (PageNumber < 1) PageNumber = 1;
+        if (PageSize <= 0) PageSize = 2;
+        
+        Products = await _productService.GetProductsAsync(Query, PageNumber, PageSize);
         
         if (Products == null)
         {
-            _logger.LogWarning("No products found for the given query: {Query}", Pagination.Query);
+            _logger.LogWarning("No products found for the given query: {Query}", Query);
             
             Products = new PaginatedResult<Product>
             {
-                CurrentPage = Pagination.Page,
-                PageSize = Pagination.PageSize,
+                CurrentPage = PageNumber,
+                PageSize = PageSize,
                 TotalItems = 0,
                 TotalPages = 0,
                 Data = []
@@ -40,8 +53,8 @@ public class IndexModel : PageModel
         }
         else
         {
-            _logger.LogInformation("Fetched {Count} products for page {Page} with page size {PageSize}", 
-                Products.Data.Count, Pagination.Page, Pagination.PageSize);
+            _logger.LogInformation("Fetched {Count} products for page {PageNumber} with page size {PageSize}", 
+                Products.Data.Count, PageNumber, PageSize);
         }
     }
 }
