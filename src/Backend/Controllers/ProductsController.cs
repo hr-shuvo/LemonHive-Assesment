@@ -94,6 +94,18 @@ public class ProductsController : ControllerBase
         return Ok(product);
     }
 
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(long id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product == null)
+            return NotFound(new { message = "Product not found." });
+
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 
     [HttpGet("search")]
     public async Task<IActionResult> Search(string query, int page = 1, int pageSize = 10)
