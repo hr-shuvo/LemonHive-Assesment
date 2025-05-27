@@ -1,9 +1,5 @@
 
-// let apiUrl = '';
-//
-// function setApiUrl(url) {
-//     apiUrl = url;
-// }
+
 
 document.addEventListener("DOMContentLoaded", function() {
     loadCart().then(r => r);
@@ -11,14 +7,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
 async function loadCart() {    
     const url = `${window.apiUrl}/cart`;
+    alert('loading cart from: ' + url);
     
     $.ajax({
         url: url,
         type: 'GET',
         success: function (cart) {
             updateCartSpans(cart);
-            // updateCartCounter(cart);
-            
             console.log(cart);
         },
         error: function (err) {
