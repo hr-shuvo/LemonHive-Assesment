@@ -10,6 +10,8 @@ public static class ServiceCollectionExtensions
         {
             client.BaseAddress = new Uri("http://localhost:5001/api/");
         });
+        
         services.AddScoped<ProductService>();
+        services.AddScoped<CartService>();
     }
 }
