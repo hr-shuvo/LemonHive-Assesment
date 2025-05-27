@@ -15,32 +15,47 @@ public class CartController : ControllerBase
         _cartService = cartService;
     }
 
-    [HttpGet("{userId}")]
-    public async Task<IActionResult> GetCart(string userId)
+    [HttpGet]
+    public async Task<IActionResult> GetCart()
     {
+        var userId = "1000";
+        
         var cart = await _cartService.GetCartByUserIdAsync(userId);
         return Ok(cart);
     }
 
-    [HttpPost("{userId}/add")]
-    public async Task<IActionResult> AddOrUpdateItem(string userId, [FromBody] CartItem item)
+    [HttpPost("increase/{productId}")]
+    public async Task<IActionResult> IncreaseItem(long productId)
     {
-        await _cartService.AddOrUpdateItemAsync(userId, item.ProductId, item.Quantity);
+        var userId = "1000";
+        await _cartService.IncreaseItemAsync(userId, productId);
         
-        return Ok(new { message = "Item updated successfully." });
+        return Ok(new { message = "Item added successfully." });
     }
 
-    [HttpDelete("{userId}/remove/{productId}")]
-    public async Task<IActionResult> RemoveItem(string userId, long productId)
+    [HttpDelete("decrease/{productId}")]
+    public async Task<IActionResult> DecreaseItem(long productId)
     {
+        var userId = "1000";
+        await _cartService.DecreaseItemAsync(userId, productId);
+        
+        return Ok(new { message = "Item descreased successfully." });
+    }
+    
+    [HttpDelete("remove/{productId}")]
+    public async Task<IActionResult> RemoveItem(long productId)
+    {
+        var userId = "1000";
         await _cartService.RemoveItemAsync(userId, productId);
         
         return Ok(new { message = "Item removed successfully." });
     }
 
-    [HttpDelete("{userId}/clear")]
-    public async Task<IActionResult> ClearCart(string userId)
+    [HttpDelete("clear")]
+    public async Task<IActionResult> ClearCart()
     {
+        var userId = "1000";
+        
         await _cartService.ClearCartAsync(userId);
         
         return Ok(new { message = "Cart cleared successfully." });

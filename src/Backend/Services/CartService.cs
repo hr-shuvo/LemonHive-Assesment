@@ -18,15 +18,31 @@ public class CartService : ICartService
         return cart;
     }
 
-    public async Task AddOrUpdateItemAsync(string userId, long productId, int quantity)
+    public async Task IncreaseItemAsync(string userId, long productId)
     {
         var cart = await GetCartByUserIdAsync(userId);
         var item = cart.Items.FirstOrDefault(i => i.ProductId == productId);
 
         if (item == null)
-            cart.Items.Add(new CartItem { ProductId = productId, Quantity = quantity });
+            cart.Items.Add(new CartItem { ProductId = productId, Quantity = 1 });
         else
-            item.Quantity = quantity;
+            item.Quantity += 1;
+
+        await cart.SaveAsync();
+    }
+    
+    public async Task DecreaseItemAsync(string userId, long productId)
+    {
+        var cart = await GetCartByUserIdAsync(userId);
+        var item = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+
+        if (item is not null)
+        {
+            if (item.Quantity > 1)
+                item.Quantity -= 1;
+            else
+                cart.Items.Remove(item);
+        }
 
         await cart.SaveAsync();
     }

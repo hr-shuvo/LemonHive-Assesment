@@ -1,20 +1,15 @@
 using Backend.Data;
+using Backend.Extensions;
 using Backend.Services;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(opt =>
-{
-    opt.UseNpgsql(connectionString);
-});
-
 builder.Services.AddScoped<ICartService, CartService>();
 
+builder.Services.AddApplicationCoreServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -24,6 +19,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("CorsPolicy");
 
 app.MapControllers();
 
