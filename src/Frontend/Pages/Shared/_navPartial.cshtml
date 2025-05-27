@@ -1,5 +1,3 @@
-
-
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 p-3">
     <div class="container">
         <a class="navbar-brand" asp-area="" asp-page="/Index" style="">
@@ -7,9 +5,16 @@
         </a>
         <div class="d-flex" >
             <button class="btn border" type="button">
-                <img src="/assets/icons/cart.ico" alt="logo"/> Cart (4)
+                <img src="/assets/icons/cart.ico" alt="logo"/> Cart <span id="cart-summary">
+                    (0)
+                </span>
             </button>
         </div>
     </div>
 </nav>
 
+
+<script src="/js/cart.js"></script>
+<script>
+    refreshCartCounter();
+</script>
