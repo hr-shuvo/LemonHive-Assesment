@@ -11,5 +11,5 @@ public class Product
     public DateTime? DiscountEndDate { get; set; }
     public decimal FinalPrice { get; set; }
     public bool IsDiscounted { get; set; }
-
+    public string? ImageUrl { get; set; }
 }

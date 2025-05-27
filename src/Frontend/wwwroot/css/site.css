@@ -20,6 +20,9 @@
 body {
   font-family: 'Inter', sans-serif;
   color: #252c32;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 :root {
