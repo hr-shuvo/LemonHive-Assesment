@@ -4,7 +4,7 @@
             <h1 class="navbar-brand mb-0 fw-bold text-primary">E-Bazar</h1>
         </a>
         <div class="d-flex" >
-            <button class="btn border" type="button">
+            <button class="btn border" type="button" onclick="showCart()">
                 <img src="/assets/icons/cart.ico" alt="logo"/> Cart <span id="cart-summary">
                     (0)
                 </span>
@@ -24,14 +24,20 @@
                 <button class="btn btn-sm btn-outline-secondary" onclick="hideCart()">×</button>
             </div>
 
+            
+            <div id="cartSummaryItems">
+                
+            </div>
+            
 
-            <div class="d-flex align-items-start mb-4 pb-3" style="border-bottom: 2px dashed #dee2e6;">
+            <div class="d-none align-items-start mb-4 pb-3" style="border-bottom: 2px dashed #dee2e6;">
                 <img src="/assets/img/drone.png" class="rounded border p-1 me-3" style="width: 60px; height: 60px; object-fit: cover;" alt="Product">
                 <div>
                     <div class="fw-medium">DJI Phantom 2 Vision+</div>
                     <div class="text-muted small">Qty: 1</div>
                 </div>
             </div>
+            
         </div>
 
     </div>
@@ -39,7 +45,7 @@
 
 
 <script src="/js/cart.js"></script>
-<script>
+<script>   
     refreshCartCounter();
 </script>
 <script>
@@ -48,8 +54,41 @@
         document.getElementById('cartOverlay').style.display = 'none';
     }
 
-    document.querySelector('.btn.border').addEventListener('click', function() {
+    function showCart() {
         document.getElementById('cartPanel').style.display = 'block';
         document.getElementById('cartOverlay').style.display = 'block';
-    });
+
+        loadCart().then(cart =>{
+            if (cart && cart.items){
+                updateCartSummary(cart);                
+            }
+        })        
+    }
+    
+    function updateCartSummary(cart) {
+        const cartSummaryItems = document.getElementById('cartSummaryItems');
+        cartSummaryItems.innerHTML = ''; // Clear previous items
+        
+        if (cart.items && cart.items.length > 0) {
+            cart.items.forEach(item => {
+                console.log(item)
+                const html = `
+            <div class="d-flex align-items-start mb-4 pb-3" style="border-bottom: 2px dashed #dee2e6;">
+                <img src="${item.image ?? '/assets/img/drone.png'}" class="rounded border p-1 me-3" style="width: 60px; height: 60px; object-fit: cover;" alt="Product">
+                <div>
+                    <div class="fw-medium">${item.name}</div>
+                    <div class="text-muted small">Qty: ${item.quantity}</div>
+                </div>
+            </div>
+        `;
+
+                cartSummaryItems.insertAdjacentHTML('beforeend', html);
+            });
+        } else {
+            cartSummaryItems.innerHTML = '<p class="text-center">Your cart is empty.</p>';
+        }
+        
+        
+    }
+
 </script>

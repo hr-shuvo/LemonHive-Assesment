@@ -1,25 +1,30 @@
 
 
 
-document.addEventListener("DOMContentLoaded", function() {
-    loadCart().then(r => r);
-})
+// document.addEventListener("DOMContentLoaded", function() {
+//     loadCart().then(r => r);
+// })
 
-async function loadCart() {    
+async function loadCart() {
     const url = `${window.apiUrl}/cart`;
-    alert('loading cart from: ' + url);
     
-    $.ajax({
-        url: url,
-        type: 'GET',
-        success: function (cart) {
-            updateCartSpans(cart);
-            console.log(cart);
-        },
-        error: function (err) {
-            console.error('Error loading cart', err);
-        }
-    });
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (cart) {
+                updateCartSpans(cart);
+                resolve(cart);
+            },
+            error: function (err) {
+                console.error('Error loading cart', err);
+                reject(err);
+            }
+        });
+    })
+    
+    
+    
 }
 
 function updateCartSpans(cart) {
