@@ -16,7 +16,7 @@ public class IndexModel : PageModel
     public int PageNumber { get; set; } = 1;
 
     [BindProperty(SupportsGet = true)]
-    public int PageSize { get; set; } = 2;
+    public int PageSize { get; set; } = 10;
 
     [BindProperty(SupportsGet = true)]
     public string? Query { get; set; }

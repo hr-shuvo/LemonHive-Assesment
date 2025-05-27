@@ -164,7 +164,8 @@ public class ProductsController : ControllerBase
             DiscountPercentage = product.DiscountPercentage,
             DiscountStartDate = product.DiscountStartDate,
             DiscountEndDate = product.DiscountEndDate,
-            FinalPrice = finalPrice
+            FinalPrice = finalPrice,
+            IsDiscounted = isDiscounted
         };
     }
 

@@ -10,4 +10,5 @@ public class ProductDto
     public DateTime? DiscountStartDate { get; set; }
     public DateTime? DiscountEndDate { get; set; }
     public decimal FinalPrice { get; set; }
+    public bool IsDiscounted { get; set; }
 }
