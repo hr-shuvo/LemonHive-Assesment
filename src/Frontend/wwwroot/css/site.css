@@ -1,22 +1,67 @@
-html {
-  font-size: 14px;
-}
+/*html {*/
+/*  font-size: 14px;*/
+/*}*/
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
+/*@media (min-width: 768px) {*/
+/*  html {*/
+/*    font-size: 16px;*/
+/*  }*/
+/*}*/
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
+/*.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {*/
+/*  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;*/
+/*}*/
 
-html {
-  position: relative;
-  min-height: 100%;
-}
+/*html {*/
+/*  position: relative;*/
+/*  min-height: 100%;*/
+/*}*/
 
 body {
-  margin-bottom: 60px;
+  font-family: 'Inter', sans-serif;
+  color: #252c32;
+}
+
+:root {
+  --bs-primary: #2f80ed;
+  --bs-primary-rgb: 47, 128, 237;
+  --bs-primary-hover: #2568c1;
+  --bs-primary-active: #1f4a8a;
+}
+
+.text-primary {
+  color: #2f80ed !important;
+}
+
+.btn-primary {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+  color: white;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:focus-visible {
+  background-color: var(--bs-primary-hover);
+  border-color: var(--bs-primary-hover);
+  color: white;
+}
+
+h2 {
+  font-size: 40px;
+  font-weight: 600;
+  color: var(--bs-primary);
+}
+
+h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2568c1;
+}
+
+h4 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #252c32;
 }
