@@ -40,17 +40,14 @@
                         </div>
 
                         <div class="mt-auto">
-                            @* @if (Model.Cart.ContainsKey(product.Id)) *@
-                            @if (true)
-                            {
+                            <div id="product-item-count-@product.Id">
                                 <button class="btn btn-primary decreaseCartBtn" data-product-id="@product.Id">-</button>
-                                <span class="btn btn-light btn-primary">2</span>
+                                <span class="btn btn-light btn-primary cart-qty" data-product-id="@product.Id">2</span>
                                 <button class="btn btn-primary increaseCartBtn" data-product-id="@product.Id">+</button>
-                            }
-                            else
-                            {
+                            </div>
+                            <div id="product-add-cart-@product.Id">
                                 <button class="btn border increaseCartBtn" data-product-id="@product.Id">Add to cart</button>
-                            }
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -90,6 +87,7 @@
     });
 
 
+    window.apiUrl = '@apiUrl';
 </script>
 
 <script src="js/cart.js"></script>

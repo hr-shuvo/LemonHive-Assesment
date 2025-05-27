@@ -1,4 +1,55 @@
 
+// let apiUrl = '';
+//
+// function setApiUrl(url) {
+//     apiUrl = url;
+// }
+
+document.addEventListener("DOMContentLoaded", function() {
+    loadCart().then(r => r);
+})
+
+async function loadCart() {    
+    const url = `${window.apiUrl}/cart`;
+    
+    $.ajax({
+        url: url,
+        type: 'GET',
+        success: function (cart) {
+            updateCartSpans(cart);
+            // updateCartCounter(cart);
+            
+            console.log(cart);
+        },
+        error: function (err) {
+            console.error('Error loading cart', err);
+        }
+    });
+}
+
+function updateCartSpans(cart) {
+    $('.cart-qty').each(function () {
+        const productId = $(this).data('product-id');
+        const item = cart.items.find(i => i.productId === productId);
+
+        const itemCountDiv = $(`#product-item-count-${productId}`);
+        const addCartDiv = $(`#product-add-cart-${productId}`);
+
+
+        if (item) {
+            $(this).text(item.quantity);
+            itemCountDiv.show();
+            addCartDiv.hide();
+        } else {
+            itemCountDiv.hide();
+            addCartDiv.show();
+        }
+    });
+}
+
+
+
+
 
 
 
@@ -28,6 +79,7 @@ async function addToCart(productId, apiUrl) {
     })
         .done(function () {
             refreshCartCounter();
+            loadCart();
         })
         .fail(function () {
             console.error('Failed to increase quantity');
@@ -45,6 +97,7 @@ async function removeFromCart(productId, apiUrl) {
     })
         .done(function () {
             refreshCartCounter();
+            loadCart();
         })
         .fail(function () {
             console.error('Failed to decrease quantity');
