@@ -33,6 +33,8 @@ public class IndexModel : PageModel
 
     public async Task OnGetAsync()
     {
+        ViewData["ApiUrl"] = "http://localhost:5001/api";
+        
         if (PageNumber < 1) PageNumber = 1;
         if (PageSize <= 0) PageSize = 2;
         
@@ -60,4 +62,52 @@ public class IndexModel : PageModel
                 Products.Data.Count, PageNumber, PageSize);
         }
     }
+
+
+
+
+    #region Cart
+
+    public IActionResult OnPostAddToCart(int productId)
+    {
+        // if (!Cart.ContainsKey(productId))
+        //     Cart[productId] = 1;
+
+        return RedirectToPage();
+    }
+    
+    public IActionResult OnPostIncreaseQuantity(int productId)
+    {
+        // if (Cart.ContainsKey(productId))
+        //     Cart[productId]++;
+        // else
+        //     Cart[productId] = 1;
+
+        return RedirectToPage();
+    }
+    
+    public IActionResult OnPostDecreaseQuantity(int productId)
+    {
+        // if (Cart.ContainsKey(productId))
+        // {
+        //     Cart[productId]--;
+        //
+        //     if (Cart[productId] <= 0)
+        //         Cart.Remove(productId);
+        // }
+
+        return RedirectToPage();
+    }
+    
+    private List<Product> LoadProducts()
+    {
+        // Example static data
+        return new List<Product>
+        {
+            new Product { Id = 1, Name = "DJI Phantom 2 Vision+", OriginalPrice = 499, DiscountPercentage = 17, IsDiscounted = true, ImageUrl = "phantom2.jpg" },
+            new Product { Id = 2, Name = "DJI Phantom 4 Multispectral", OriginalPrice = 1449, IsDiscounted = false, ImageUrl = "phantom4.jpg" }
+        };
+    }
+
+    #endregion
 }
