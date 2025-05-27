@@ -1,5 +1,8 @@
 @model Frontend.Models.CartModel
 
+@{
+    var itemCount = Model.Items.Count > 0 ? Model.Items.Select(p => p.Quantity).Sum() : 0;
+}
 <span id="cart-counter">
-    (@Model.Items.Count)
+    (@itemCount)
 </span>

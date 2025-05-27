@@ -17,26 +17,36 @@ function refreshCartCounter() {
         .catch(err => console.error("Failed to update cart", err));
 }
 
-async function addToCart(productId) {
-    const res = await fetch('/api/cart/increase/'+productId, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ productId })
-    });
+async function addToCart(productId, apiUrl) {
+    const url = `${apiUrl}/cart/increase/${productId}`;
 
-    if (res.ok) {
-        refreshCartCounter();
-    }
+    return $.ajax({
+        url: url,
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ productId: productId, quantity: 1 }),
+    })
+        .done(function () {
+            refreshCartCounter();
+        })
+        .fail(function () {
+            console.error('Failed to increase quantity');
+        });
 }
 
-async function removeFromCart(productId) {
-    const res = await fetch('/api/cart/decrease'+productId, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ productId })
-    });
+async function removeFromCart(productId, apiUrl) {
+    const url = `${apiUrl}/cart/decrease/${productId}`;
 
-    if (res.ok) {
-        refreshCartCounter();
-    }
+    return $.ajax({
+        url: url,
+        type: 'DELETE',
+        contentType: 'application/json',
+        data: JSON.stringify({ productId: productId, quantity: 1 }),
+    })
+        .done(function () {
+            refreshCartCounter();
+        })
+        .fail(function () {
+            console.error('Failed to decrease quantity');
+        });
 }

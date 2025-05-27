@@ -67,13 +67,14 @@
 <script>
 
     $(document).ready(function () {
+        const apiUrl = '@apiUrl';
+
         let decreaseBtn = document.getElementsByClassName("decreaseCartBtn");
 
         for (let i = 0; i < decreaseBtn.length; i++) {
             decreaseBtn[i].onclick = function () {
                 let productId = this.dataset.productId;
-
-                decreaseCartItem(productId)
+                removeFromCart(productId, apiUrl);
             };
         }
         
@@ -83,7 +84,7 @@
             addOrIncreaseBtn[i].onclick = function () {
                 let productId = this.dataset.productId;
 
-                addOrIncreaseCartItem(productId)
+                addToCart(productId, apiUrl);
             };
         }
     });
@@ -91,46 +92,5 @@
 
 </script>
 
-<script>
-
-    async function addOrIncreaseCartItem(productId) {
-        const apiUrl = '@apiUrl';
-        const url = `${apiUrl}/cart/increase/${productId}`;
-
-        return $.ajax({
-            url: url,
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ productId: productId, quantity: 1 }),
-        })
-            .done(function () {
-                alert('Quantity increased successfully');
-            })
-            .fail(function () {
-                alert('Failed to increase quantity');
-            });
-
-    }
-
-    async function decreaseCartItem(productId) {
-        const apiUrl = '@apiUrl';
-        const url = `${apiUrl}/cart/decrease/${productId}`;
-
-
-        return $.ajax({
-            url: url,
-            type: 'DELETE',
-            contentType: 'application/json',
-        })
-            .done(function () {
-                alert('Quantity decreased successfully');
-            })
-            .fail(function () {
-                alert('Failed to decrease quantity');
-            });
-
-    }
-
-
-</script>
+<script src="js/cart.js"></script>
 
