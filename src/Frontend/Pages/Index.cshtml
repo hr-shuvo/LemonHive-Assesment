@@ -6,12 +6,55 @@
 
 <div class="container py-4">
 
-    
+
     <div>
-        <h1 class="text-center mb-4">Product List</h1>
-        <p class="text-center">Total Products: @Model.Products!.TotalItems</p>
+        <div class="container my-4">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="bg-white text-primary rounded p-2 me-2">
+                                    <i class="fas fa-warehouse fa-lg"></i>
+                                </div>
+                                <h5 class="card-title mb-0">Total Product : 100</h5>
+                            </div>
+                            <p class="card-text mt-2">Warehouse has total of 100 product today &amp; the max capacity is
+                                200.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="bg-white text-primary rounded p-2 me-2">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <h5 class="card-title mb-0">Total Vendor: 06</h5>
+                            </div>
+                            <p class="card-text mt-2">A total of 6 out of 10 vendor are available for supply now.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="bg-white text-primary rounded p-2 me-2">
+                                    <i class="fas fa-box-open fa-lg"></i>
+                                </div>
+                                <h5 class="card-title mb-0">Unique Product : 40</h5>
+                            </div>
+                            <p class="card-text mt-2">Total number of products that are not duplicate or redundant.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
-    
+
     <div class="row w-100 mb-4">
         <div class="col-md-9">
             <form method="get" class="d-flex justify-content-center">
@@ -31,29 +74,28 @@
         </div>
 
     </div>
-    
 
-    
+
     <partial name="PartialView/_productListPartial" model="Model.Products"/>
 
 
-    <div class="mt-8 flex justify-center space-x-4">
-        <ul class="pagination justify-content-center">
-            
+    <div class="mt-8 flex justify-content-end space-x-4">
+        <ul class="pagination justify-content-end mt-2 gap-2">
+
             <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
-                <a class="page-link"
+                <a class="page-link border-0"
                    asp-page="./Index"
                    asp-route-pageNumber="@(Model.PageNumber - 1)"
                    asp-route-pageSize="@Model.PageSize"
                    asp-route-query="@Model.Query">
-                    Previous
+                    <i class="fa fa-arrow-left"></i> Previous
                 </a>
             </li>
 
             @for (int i = 1; i <= Model.Products!.TotalPages; i++)
             {
                 <li class="page-item @(Model.PageNumber == i ? "active" : "")">
-                    <a class="page-link"
+                    <a class="page-link border-0"
                        asp-page="./Index"
                        asp-route-pageNumber="@i"
                        asp-route-pageSize="@Model.PageSize"
@@ -64,18 +106,17 @@
             }
 
             <li class="page-item @(Model.PageNumber >= Model.Products.TotalPages ? "disabled" : "")">
-                <a class="page-link"
+                <a class="page-link border-0"
                    asp-page="./Index"
                    asp-route-pageNumber="@(Model.PageNumber + 1)"
                    asp-route-pageSize="@Model.PageSize"
                    asp-route-query="@Model.Query">
-                    Next
+                    Next <i class="fa fa-arrow-right"></i>
                 </a>
             </li>
-            
+
         </ul>
     </div>
-
 
 
 </div>
