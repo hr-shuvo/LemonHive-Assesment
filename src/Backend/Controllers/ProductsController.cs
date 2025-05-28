@@ -1,6 +1,7 @@
 using Backend.Data;
 using Backend.Dtos;
 using Backend.Models;
+using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,45 +11,53 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IProductService _productService;
 
-    public ProductsController(ApplicationDbContext context)
+    public ProductsController(IProductService productService)
     {
-        _context = context;
+        _productService = productService;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll(int page = 1, int pageSize = 10)
     {
-        var totalItems = await _context.Products.CountAsync();
-        var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-
-        var products = await _context.Products
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        var afterDiscount = products.Select(ApplyDiscount);
-
-        return Ok(new
+        try
         {
-            currentPage = page,
-            pageSize,
-            totalItems,
-            totalPages,
-            data = afterDiscount
-        });
+            if (page < 1) page = 1;
+            if (pageSize is < 1 or > 100) pageSize = 10;
+
+            var result = await _productService.LoadProductsAsync(page, pageSize);
+            return Ok(new
+            {
+                currentPage = result.page,
+                pageSize = result.size,
+                totalItems = result.totalCount,
+                totalPages = result.totalPage,
+                data = result.items
+            });
+
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = "An error occurred while fetching products.", details = e.Message });
+        }
     }
 
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(long id)
     {
-        var product = await _context.Products.FindAsync(id);
-        if (product == null) return NotFound();
+        try
+        {
+            var product = await _productService.GetProductByIdAsync(id);
+            if (product == null) return NotFound();
 
-        var afterDiscount = ApplyDiscount(product);
-        return Ok(afterDiscount);
+            return Ok(product);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = "An error occurred while fetching the product.", details = e.Message });
+        }
     }
 
 
@@ -58,120 +67,64 @@ public class ProductsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        Product product;
-
-        if (dto.Id is > 0)
+        try
         {
-            product = await _context.Products.FindAsync(dto.Id.Value);
-            if (product == null)
-                return NotFound("Product not found");
-
-            product.Name = dto.Name;
-            product.Description = dto.Description;
-            product.Price = dto.Price;
-            product.DiscountPercentage = dto.DiscountPercentage;
-            product.DiscountStartDate = dto.DiscountStartDate;
-            product.DiscountEndDate = dto.DiscountEndDate;
-
-            _context.Products.Update(product);
+            await _productService.UpsertProductAsync(dto);
+            
+            return Ok();
         }
-        else
+        catch (KeyNotFoundException e)
         {
-            product = new Product
-            {
-                Name = dto.Name,
-                Description = dto.Description,
-                Price = dto.Price,
-                DiscountPercentage = dto.DiscountPercentage,
-                DiscountStartDate = dto.DiscountStartDate,
-                DiscountEndDate = dto.DiscountEndDate
-            };
-
-            _context.Products.Add(product);
+            return NotFound(new { message = e.Message });
         }
-
-        await _context.SaveChangesAsync();
-        return Ok(product);
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = "An error occurred while saving the product.", details = e.Message });
+        }
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(long id)
     {
-        var product = await _context.Products.FindAsync(id);
-        if (product == null)
-            return NotFound(new { message = "Product not found." });
-
-        _context.Products.Remove(product);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        try
+        {
+            await _productService.DeleteProductAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(new { message = e.Message });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = "An error occurred while deleting the product.", details = e.Message });
+        }
     }
 
     [HttpGet("search")]
     public async Task<IActionResult> Search(string query, int page = 1, int pageSize = 10)
     {
-        if (string.IsNullOrWhiteSpace(query))
-            query = "";
-
-        query = query.ToLower();
-
-        var filtered = _context.Products
-            .Where(p => p.Name.ToLower().Contains(query) || p.Description.ToLower().Contains(query));
-
-        var totalItems = await filtered.CountAsync();
-        var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-
-        var results = await filtered
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        var afterDiscount = results.Select(ApplyDiscount);
-
-        return Ok(new
+        try
         {
-            currentPage = page,
-            pageSize,
-            totalItems,
-            totalPages,
-            data = afterDiscount
-        });
+            var result = await _productService.SearchProductsAsync(query, page, pageSize);
+            
+            return Ok(new
+            {
+                currentPage = result.page,
+                pageSize = result.size,
+                totalItems = result.totalCount,
+                totalPages = result.totalPage,
+                data = result.items
+            });
+
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, new { message = "An error occurred while searching for products.", details = e.Message });
+        }
     }
 
 
-    #region Private Methods
-    
-    private static ProductDto ApplyDiscount(Product product)
-    {
-        var now = DateTime.UtcNow;
-
-        var isDiscounted = product.DiscountStartDate.HasValue &&
-                           product.DiscountEndDate.HasValue &&
-                           product.DiscountPercentage.HasValue &&
-                           product.DiscountStartDate <= now &&
-                           now <= product.DiscountEndDate;
-
-        var finalPrice = isDiscounted
-            ? product.Price - (product.Price * product.DiscountPercentage.Value / 100)
-            : product.Price;
-
-        return new ProductDto()
-        {
-            Id = product.Id,
-            Name = product.Name,
-            Description = product.Description,
-            OriginalPrice = product.Price,
-            DiscountPercentage = product.DiscountPercentage,
-            DiscountStartDate = product.DiscountStartDate,
-            DiscountEndDate = product.DiscountEndDate,
-            FinalPrice = finalPrice,
-            IsDiscounted = isDiscounted
-        };
-    }
-
-    
-
-    #endregion
 
     
 }

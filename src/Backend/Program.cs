@@ -8,6 +8,7 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddApplicationCoreServices(builder.Configuration);
 
