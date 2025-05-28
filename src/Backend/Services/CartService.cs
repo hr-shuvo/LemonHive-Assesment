@@ -18,13 +18,19 @@ public class CartService : ICartService
         return cart;
     }
 
-    public async Task IncreaseItemAsync(string userId, long productId)
+    public async Task IncreaseItemAsync(string userId, long productId, string name, decimal price)
     {
         var cart = await GetCartByUserIdAsync(userId);
         var item = cart.Items.FirstOrDefault(i => i.ProductId == productId);
 
         if (item == null)
-            cart.Items.Add(new CartItem { ProductId = productId, Quantity = 1 });
+            cart.Items.Add(new CartItem
+            {
+                ProductId = productId, 
+                Quantity = 1,
+                Name = name,
+                Price = price
+            });
         else
             item.Quantity += 1;
 

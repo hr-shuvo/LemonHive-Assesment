@@ -50,10 +50,6 @@ function updateCartSpans(cart) {
 
 
 
-
-
-
-
 function refreshCartCounter() {    
     fetch('/Cart/CartNavPartial')
         .then(res => res.text())
@@ -68,14 +64,18 @@ function refreshCartCounter() {
         .catch(err => console.error("Failed to update cart", err));
 }
 
-async function addToCart(productId, apiUrl) {
+async function addToCart(apiUrl, productId, productName, productPrice) {
     const url = `${apiUrl}/cart/increase/${productId}`;
 
     return $.ajax({
         url: url,
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify({ productId: productId, quantity: 1 }),
+        data: JSON.stringify({
+            productId: productId, 
+            quantity: 1,
+            name: productName, 
+            price: productPrice  }),
     })
         .done(function () {
             refreshCartCounter();

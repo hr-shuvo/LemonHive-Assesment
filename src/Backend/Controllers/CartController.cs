@@ -1,3 +1,4 @@
+using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,17 +19,17 @@ public class CartController : ControllerBase
     public async Task<IActionResult> GetCart()
     {
         var userId = "1000";
-        
+
         var cart = await _cartService.GetCartByUserIdAsync(userId);
         return Ok(cart);
     }
 
     [HttpPost("increase/{productId}")]
-    public async Task<IActionResult> IncreaseItem(long productId)
+    public async Task<IActionResult> IncreaseItem(long productId, [FromBody] CartItemAdd item)
     {
         var userId = "1000";
-        await _cartService.IncreaseItemAsync(userId, productId);
-        
+        await _cartService.IncreaseItemAsync(userId, productId, item.Name, item.Price);
+
         return Ok(new { message = "Item added successfully." });
     }
 
@@ -37,16 +38,16 @@ public class CartController : ControllerBase
     {
         var userId = "1000";
         await _cartService.DecreaseItemAsync(userId, productId);
-        
+
         return Ok(new { message = "Item descreased successfully." });
     }
-    
+
     [HttpDelete("remove/{productId}")]
     public async Task<IActionResult> RemoveItem(long productId)
     {
         var userId = "1000";
         await _cartService.RemoveItemAsync(userId, productId);
-        
+
         return Ok(new { message = "Item removed successfully." });
     }
 
@@ -54,9 +55,9 @@ public class CartController : ControllerBase
     public async Task<IActionResult> ClearCart()
     {
         var userId = "1000";
-        
+
         await _cartService.ClearCartAsync(userId);
-        
+
         return Ok(new { message = "Cart cleared successfully." });
     }
 }
