@@ -1,0 +1,77 @@
+@using Frontend.Models;
+@model Product;
+
+
+
+
+<div class="modal fade" id="createProductModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" id="createModalContent">
+
+
+                <div>
+                    <h1>Create Product</h1>
+
+                    <div class="mb-3">
+                        <label>Name</label>
+                        <input class="form-control" name="Name" id="productName" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Original Price</label>
+                        <input class="form-control" name="OriginalPrice" id="productPrice" type="number" />
+                    </div>
+
+                    <button class="btn btn-primary" id="createProductBtn" data-api-url="@apiUrl">Create Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $('#openCreateModal').on('click', function () {
+            $('#createProductModal').modal('show');
+        });
+
+
+        $(document).on('click', '#createProductBtn', function () {
+            const name = $('#productName').val();
+            const price = parseFloat($('#productPrice').val());
+            const apiUrl = $(this).data('api-url');
+
+            const product = {
+                name: name,
+                price: price
+            };
+
+            const url = `${window.apiUrl}/products/upsert`;
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(product),
+                success: function () {
+                    alert('product added successfully');
+                    $('#createProductModal').modal('hide');
+                },
+                error: function (err) {
+                    console.error('Error loading cart', err);
+                    alert('Failed');
+                }
+            });
+
+
+        });
+
+
+
+
+    })
+</script>
