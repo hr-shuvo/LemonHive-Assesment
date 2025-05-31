@@ -30,11 +30,11 @@
                         <h5 class="card-title product-name">@product.Name</h5>
 
                         <div class="mb-2">
-                            <span class="fw-bold text-success product-price">$@product.OriginalPrice</span>
+                            <span class="fw-bold text-success product-final-price">$@product.FinalPrice</span>
                             @if (product.DiscountPercentage.HasValue && product.DiscountPercentage > 0 && product.IsDiscounted)
                             {
-                                <span class="text-muted text-decoration-line-through ms-2">
-                                    $@(Math.Round(product.OriginalPrice / (1 - product.DiscountPercentage.Value / 100), 2))
+                                <span class="text-muted text-decoration-line-through ms-2 product-price">
+                                    $@product.OriginalPrice)
                                 </span>
                             }
                         </div>
@@ -83,11 +83,11 @@
 
                 const cardBody = this.closest(".card-body");
                 const productName = cardBody.querySelector(".product-name")?.textContent.trim() || 'Unknown';
-                const productPriceText = cardBody.querySelector(".product-price")?.textContent.trim() || '0';
+                const productPriceText = cardBody.querySelector(".product-final-price")?.textContent.trim() || '0';
                 const productPrice = parseFloat(productPriceText.replace(/[^0-9.]/g, ''));
-
+@* 
                 console.log("Product Name:", productName);
-                console.log("Product Price:", productPrice);
+                console.log("Product Price:", productPrice); *@
 
                 addToCart(apiUrl, productId, productName, productPrice);
             };
