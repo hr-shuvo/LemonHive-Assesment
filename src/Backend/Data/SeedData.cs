@@ -76,8 +76,8 @@ public class SeedData
                     // UserId = "",
                     Items =
                     [
-                        new CartItem { ProductId = 1, Quantity = 7 , Name = "DJI Phantom 2", Price=500},
-                        new CartItem { ProductId = 2, Quantity = 3 , Name="DJI Phantom 4", Price=1499},
+                        // new CartItem { ProductId = 1, Quantity = 7 , Name = "DJI Phantom 2", Price=500},
+                        // new CartItem { ProductId = 2, Quantity = 3 , Name="DJI Phantom 4", Price=1499},
                     ]
                 };
 

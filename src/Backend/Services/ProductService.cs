@@ -1,32 +1,39 @@
+using System.Linq.Expressions;
 using Backend.Data;
 using Backend.Dtos;
 using Backend.Models;
-using Microsoft.EntityFrameworkCore;
+using Backend.Repositories;
 
 namespace Backend.Services;
 
 public class ProductService : IProductService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IBaseRepository<Product> _repo;
 
-    public ProductService(ApplicationDbContext context)
+    public ProductService(ApplicationDbContext context, IBaseRepository<Product> repository)
     {
         _context = context;
+        _repo = repository;
     }
 
     public async Task<(List<ProductDto> items, int page, int size, int totalPage, int totalCount)> LoadProductsAsync(int page, int pageSize)
     {
-        var totalItems = await _context.Products.CountAsync();
-        var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+        // var totalItems = await _context.Products.CountAsync();
+        // var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
-        var products = await _context.Products
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+        // var products = await _context.Products
+        //     .Skip((page - 1) * pageSize)
+        //     .Take(pageSize)
+        //     .ToListAsync();
 
-        var afterDiscount = products.Select(ApplyDiscount).ToList();
+        Expression<Func<Product, bool>> filter = x => true;
+
+        var result = await _repo.LoadAsync(filter, page, pageSize);
+
+        var afterDiscount = result.DataList.Select(ApplyDiscount).ToList();
         
-        return (afterDiscount, page, pageSize, totalPages, totalItems);
+        return (afterDiscount, page, pageSize, result.TotalPage, result.TotalCount);
     }
 
     public async Task<ProductDto> GetProductByIdAsync(long id)
@@ -93,20 +100,14 @@ public class ProductService : IProductService
 
         searchTerm = searchTerm.ToLower();
 
-        var filtered = _context.Products
-            .Where(p => p.Name.ToLower().Contains(searchTerm) || p.Description.ToLower().Contains(searchTerm));
+        Expression<Func<Product, bool>> filter = x => x.Name.ToLower().Contains(searchTerm) ||
+        x.Description.ToLower().Contains(searchTerm);
 
-        var totalItems = await filtered.CountAsync();
-        var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+        var result = await _repo.LoadAsync(filter, page, pageSize);
 
-        var results = await filtered
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-
-        var afterDiscount = results.Select(ApplyDiscount).ToList();
+        var afterDiscount = result.DataList.Select(ApplyDiscount).ToList();
         
-        return (afterDiscount, page, pageSize, totalPages, totalItems);
+        return (afterDiscount, page, pageSize, result.TotalPage, result.TotalCount);
     }
     
     
