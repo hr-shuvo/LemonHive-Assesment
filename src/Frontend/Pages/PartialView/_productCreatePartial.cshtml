@@ -74,8 +74,10 @@
             const name = $('#productName').val();
             const price = parseFloat($('#productPrice').val());
             const discountPercentage = parseFloat($('#discountPercentage').val());
-            const discountStart = new Date($('#discountStart').val()).toISOString();
-            const discountEnd = new Date($('#discountEnd').val()).toISOString();
+            const discountStart = $('#discountStart').val() && !isNaN(new Date($('#discountStart').val())) ? new Date($('#discountStart').val()).toISOString() : null;
+            const discountEnd = $('#discountEnd').val() && !isNaN(new Date($('#discountEnd').val())) ? new Date($('#discountEnd').val()).toISOString() : null;
+
+            @* const discountEnd = new Date($('#discountEnd').val()).toISOString(); *@
 
             const product = {
                 name: name,
